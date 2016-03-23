@@ -1,4 +1,5 @@
 class Note < ApplicationRecord
-  belongs_to :contact
-  belongs_to :topic
+  self.inheritance_column = :type
+  #belongs_to :contact
+  belongs_to :topic, polymorphic: true, optional: true
 end

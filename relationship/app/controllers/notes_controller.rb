@@ -15,10 +15,14 @@ class NotesController < ApplicationController
 
   # POST /notes
   def create
-    @note = Note.new(note_params)
+    node_kls = params[:data][:type].underscore.classify.safe_constantize
+    @note = node_kls.new(note_params)
+
+    @note.topic = relationship_params[:topic]
+    @note.contact = relationship_params[:contact]
 
     if @note.save
-      render json: @note, status: :created, location: @note
+      render json: @note, status: :created, location: note_url(@note)
     else
       render json: @note.errors, status: :unprocessable_entity
     end
@@ -27,6 +31,8 @@ class NotesController < ApplicationController
   # PATCH/PUT /notes/1
   def update
     if @note.update(note_params)
+      @note.topic = relationship_params[:topic] if relationship_params[:topic]
+      @note.contact = relationship_params[:contact] if relationship_params[:contact]
       render json: @note
     else
       render json: @note.errors, status: :unprocessable_entity
@@ -46,6 +52,6 @@ class NotesController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def note_params
-      params.require(:note).permit(:type, :title, :description, :contact_id, :topic_id)
+      params.require(:data).require(:attributes).permit(:title, :description)
     end
 end
