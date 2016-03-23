@@ -17,9 +17,9 @@ class ProjectsController < ApplicationController
   def create
     @project = Project.new(project_params)
 
-    @project.contacts  << (relationship_params[:contacts]||[])
-    @project.tasks  << (relationship_params[:tasks]||[])
-
+    @project.contacts  = relationship_params[:contacts]||[]
+    @project.tasks  = relationship_params[:tasks]||[]
+    @project.offers  = relationship_params[:offers]||[]
     if @project.save
       render json: @project, status: :created, location: @project
     else
@@ -32,6 +32,7 @@ class ProjectsController < ApplicationController
     if @project.update(project_params)
       @project.contacts = relationship_params[:contacts] if relationship_params[:contacts]
       @project.tasks = relationship_params[:tasks] if relationship_params[:tasks]
+      @project.offers = relationship_params[:offers] if relationship_params[:offers]
       render json: @project
     else
       render json: @project.errors, status: :unprocessable_entity

@@ -16,6 +16,9 @@ class OffersController < ApplicationController
   # POST /offers
   def create
     @offer = Offer.new(offer_params)
+    @offer.project = relationship_params[:project]
+    @offer.contacts = relationship_params[:contacts] ||[]
+    @offer.tasks = relationship_params[:tasks] ||[]
 
     if @offer.save
       render json: @offer, status: :created, location: @offer
@@ -27,6 +30,9 @@ class OffersController < ApplicationController
   # PATCH/PUT /offers/1
   def update
     if @offer.update(offer_params)
+      @offer.project = relationship_params[:project] if relationship_params[:projects]
+      @offer.contacts = relationship_params[:contacts] if relationship_params[:contacts]
+      @offer.tasks = relationship_params[:tasks] if relationship_params[:tasks]
       render json: @offer
     else
       render json: @offer.errors, status: :unprocessable_entity
@@ -46,6 +52,6 @@ class OffersController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def offer_params
-      params.require(:offer).permit(:name, :price, :status, :valid_until)
+      params.require(:data).require(:attributes).permit(:name, :price, :status, :valid_until)
     end
 end
