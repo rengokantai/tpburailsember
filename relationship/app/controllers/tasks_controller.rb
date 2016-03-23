@@ -16,6 +16,7 @@ class TasksController < ApplicationController
   # POST /tasks
   def create
     @task = Task.new(task_params)
+    @task.project = relationship_params[:project]
 
     if @task.save
       render json: @task, status: :created, location: @task
@@ -27,6 +28,7 @@ class TasksController < ApplicationController
   # PATCH/PUT /tasks/1
   def update
     if @task.update(task_params)
+      @task.project= relationship_params[:project] if relationship_params[:project]
       render json: @task
     else
       render json: @task.errors, status: :unprocessable_entity
@@ -46,6 +48,6 @@ class TasksController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def task_params
-      params.require(:task).permit(:description, :status, :project_id, :due_at)
+      params.require(:data).require(:attributes).permit(:description, :status, :project_id, :due_at)
     end
 end

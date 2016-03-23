@@ -16,6 +16,7 @@ class CompaniesController < ApplicationController
   # POST /companies
   def create
     @company = Company.new(company_params)
+    @company.contacts = relationship_params[:contacts] ||[]
 
     if @company.save
       render json: @company, status: :created, location: @company
@@ -46,6 +47,6 @@ class CompaniesController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def company_params
-      params.require(:company).permit(:name, :phone, :email, :website, :address, :customer_id, :additional_info)
+      params.require(:data).require(:attributes).permit(:name, :phone, :email, :website, :address, :customer_id, :additional_info)
     end
 end
